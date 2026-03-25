@@ -1039,44 +1039,89 @@
 
         // 34. Dynamic Layout
         'dynamic-layout': function(container) {
-            container.style.cssText = 'display:flex;align-items:center;justify-content:center;background:#f8fafc;padding:12px;';
+            container.style.cssText = 'display:flex;align-items:center;justify-content:center;background:#0f172a;padding:12px;overflow:hidden;';
 
             const wrapper = document.createElement('div');
-            wrapper.style.cssText = 'display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);gap:8px;';
+            wrapper.style.cssText = 'display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(3,30px);gap:6px;transition:all 0.5s cubic-bezier(0.4, 0, 0.2, 1);';
 
-            // Create different sized cards
-            const cards = [
-                { content: '📊', span: '1/1', row: '1/2', color: '#6366f1' },
-                { content: '📝', span: '2/3', row: '1/2', color: '#8b5cf6' },
-                { content: '🎨', span: '1/1', row: '2/3', color: '#a78bfa' },
-                { content: '⚡', span: '1/1', row: '2/3', color: '#f472b6', big: true },
-                { content: '🔧', span: '1/1', row: '1/2', color: '#06b6d4' }
+            // Bento layout configurations that cycle through
+            const layouts = [
+                // Layout 1: Hero top left
+                [
+                    { col: '1/3', row: '1/3', icon: '📱', label: 'Hero', color: '#6366f1' },
+                    { col: '3/4', row: '1/2', icon: '📊', label: 'Stat', color: '#8b5cf6' },
+                    { col: '3/4', row: '2/3', icon: '⚡', label: 'Fast', color: '#a78bfa' },
+                    { col: '4/5', row: '1/3', icon: '🎨', label: 'Art', color: '#f472b6' }
+                ],
+                // Layout 2: Hero top right
+                [
+                    { col: '1/2', row: '1/2', icon: '📊', label: 'Data', color: '#06b6d4' },
+                    { col: '1/2', row: '2/3', icon: '⚡', label: 'Quick', color: '#6366f1' },
+                    { col: '2/4', row: '1/3', icon: '📱', label: 'Main', color: '#8b5cf6' },
+                    { col: '4/5', row: '1/3', icon: '🎨', label: 'Side', color: '#f472b6' }
+                ],
+                // Layout 3: Balanced grid
+                [
+                    { col: '1/2', row: '1/2', icon: '📱', label: 'App', color: '#6366f1' },
+                    { col: '2/3', row: '1/2', icon: '📊', label: 'Chart', color: '#8b5cf6' },
+                    { col: '3/4', row: '1/2', icon: '⚡', label: 'Sync', color: '#a78bfa' },
+                    { col: '4/5', row: '1/2', icon: '🎨', label: 'UI', color: '#f472b6' },
+                    { col: '1/3', row: '2/3', icon: '🔧', label: 'Tools', color: '#06b6d4' },
+                    { col: '3/5', row: '2/3', icon: '💡', label: 'Tips', color: '#10b981' }
+                ],
+                // Layout 4: Vertical split
+                [
+                    { col: '1/2', row: '1/3', icon: '📱', label: 'Mobile', color: '#6366f1' },
+                    { col: '2/3', row: '1/2', icon: '📊', label: 'Stats', color: '#8b5cf6' },
+                    { col: '3/4', row: '1/2', icon: '⚡', label: 'Speed', color: '#a78bfa' },
+                    { col: '2/4', row: '2/3', icon: '🎨', label: 'Design', color: '#f472b6' },
+                    { col: '4/5', row: '2/3', icon: '🔧', label: 'Config', color: '#06b6d4' }
+                ]
             ];
 
-            cards.forEach((card, i) => {
-                const div = document.createElement('div');
-                const isWide = card.span === '2/3';
-                const isTall = card.row === '1/3';
-                div.style.cssText = `grid-column:${card.span};grid-row:${card.row};background:${card.color};border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:${card.big ? 18 : 14}px;color:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.1);transition:all 0.3s ease;opacity:0;animation:fadeIn 0.3s ease ${i * 0.1}s forwards;`;
-                div.textContent = card.content;
-                wrapper.appendChild(div);
+            let currentLayout = 0;
+            const cardElements = [];
 
-                // Hover effect
-                div.addEventListener('mouseenter', () => {
-                    div.style.transform = 'scale(1.05)';
-                    div.style.boxShadow = '0 4px 16px rgba(0,0,0,0.15)';
+            function renderLayout(layoutIndex) {
+                wrapper.innerHTML = '';
+                cardElements.length = 0;
+
+                const layout = layouts[layoutIndex];
+
+                layout.forEach((item, i) => {
+                    const card = document.createElement('div');
+                    card.style.cssText = `grid-column:${item.col};grid-row:${item.row};background:${item.color};border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;opacity:0;transform:scale(0.9);transition:all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);`;
+                    card.innerHTML = `<span style="font-size:${item.row.includes('3') ? '18' : '14'}px;">${item.icon}</span><span style="font-size:6px;color:#fff;font-weight:600;">${item.label}</span>`;
+                    wrapper.appendChild(card);
+                    cardElements.push(card);
+
+                    setTimeout(() => {
+                        card.style.opacity = '1';
+                        card.style.transform = 'scale(1)';
+                    }, i * 60);
                 });
-                div.addEventListener('mouseleave', () => {
-                    div.style.transform = 'scale(1)';
-                    div.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
-                });
-            });
+            }
 
             container.appendChild(wrapper);
+            renderLayout(0);
 
-            const style = document.createElement('style');
-            style.textContent = '@keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }';
-            container.appendChild(style);
+            // Cycle through layouts
+            setInterval(() => {
+                currentLayout = (currentLayout + 1) % layouts.length;
+
+                // Fade out current cards
+                cardElements.forEach((card, i) => {
+                    setTimeout(() => {
+                        card.style.opacity = '0';
+                        card.style.transform = 'scale(0.8)';
+                    }, i * 30);
+                });
+
+                // Render new layout after fade out
+                setTimeout(() => {
+                    renderLayout(currentLayout);
+                }, 400);
+            }, 2500);
         },
 
         // ============================================
