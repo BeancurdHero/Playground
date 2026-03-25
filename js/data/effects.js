@@ -599,19 +599,51 @@
 
         // 4. Aesthetic Minimal
         'aesthetic-minimal': function(container) {
-            container.style.cssText = 'display:flex;align-items:center;justify-content:center;background:#f5f5f0;';
+            container.style.cssText = 'display:flex;align-items:center;justify-content:center;background:#faf9f6;padding:12px;';
+
+            const wrapper = document.createElement('div');
+            wrapper.style.cssText = 'display:flex;flex-direction:column;gap:8px;';
+
+            // Main card with photo-style minimal layout
             const card = document.createElement('div');
-            card.style.cssText = 'padding:28px 36px;background:#fff;border-radius:2px;';
-            card.innerHTML = '<h2 style="margin:0;font-family:"Playfair Display",serif;font-weight:400;font-size:16px;color:#1a1a1a;letter-spacing:0.05em;">Aesthetic</h2>';
-            container.appendChild(card);
+            card.style.cssText = 'background:#fff;padding:12px;border:1px solid #e8e4d9;display:flex;gap:10px;align-items:center;';
+
+            // Circle image placeholder
+            const circle = document.createElement('div');
+            circle.style.cssText = 'width:32px;height:32px;background:linear-gradient(135deg,#d4c5b9,#e8d8c4);border-radius:50%;flex-shrink:0;';
+            card.appendChild(circle);
+
+            // Content
+            const content = document.createElement('div');
+            content.style.cssText = 'display:flex;flex-direction:column;gap:4px;';
+            content.innerHTML = '<span style="font-size:11px;font-weight:500;color:#2d2d2d;font-family:"Georgia",serif;">Essence</span><span style="font-size:7px;color:#9ca3af;letter-spacing:0.5px;">PURE FORM</span>';
+            card.appendChild(content);
+
+            wrapper.appendChild(card);
+
+            // Minimal decorative elements
+            const dots = document.createElement('div');
+            dots.style.cssText = 'display:flex;gap:6px;justify-content:center;';
+            dots.innerHTML = '<div style="width:4px;height:4px;background:#d4c5b9;border-radius:50%;"></div><div style="width:4px;height:4px;background:#e8d8c4;border-radius:50%;"></div><div style="width:4px;height:4px;background:#d4c5b9;border-radius:50%;"></div>';
+            wrapper.appendChild(dots);
+
+            container.appendChild(wrapper);
         },
 
         // 5. Clean Design
         'clean-design': function(container) {
-            container.style.cssText = 'display:flex;align-items:center;justify-content:center;background:#f8f9fa;';
+            container.style.cssText = 'display:flex;align-items:center;justify-content:center;background:#f8f9fa;padding:12px;';
+
             const card = document.createElement('div');
-            card.style.cssText = 'background:#fff;padding:20px;border-radius:12px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;';
-            card.innerHTML = '<div style="width:20px;height:20px;background:#6366f1;border-radius:4px;"></div><div style="width:20px;height:20px;background:#a5b4fc;border-radius:4px;"></div><div style="width:20px;height:20px;background:#c7d2fe;border-radius:4px;"></div>';
+            card.style.cssText = 'background:#fff;padding:16px;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,0.06);display:flex;flex-direction:column;gap:10px;min-width:90px;';
+
+            // Header
+            card.innerHTML = '<div style="display:flex;align-items:center;gap:8px;"><div style="width:24px;height:24px;background:linear-gradient(135deg,#667eea,#764ba2);border-radius:8px;"></div><div style="flex:1;"><div style="font-size:10px;font-weight:600;color:#1a1a2e;">Clean UI</div><div style="font-size:7px;color:#9ca3af;">Card Layout</div></div></div>';
+
+            // Content rows
+            card.innerHTML += '<div style="display:flex;gap:6px;"><div style="flex:1;height:6px;background:#f3f4f6;border-radius:3px;"></div><div style="width:20px;height:6px;background:#667eea;border-radius:3px;"></div></div>';
+            card.innerHTML += '<div style="display:flex;gap:6px;"><div style="width:30px;height:6px;background:#a5b4fc;border-radius:3px;"></div><div style="flex:1;height:6px;background:#f3f4f6;border-radius:3px;"></div></div>';
+
             container.appendChild(card);
         },
 
@@ -644,20 +676,73 @@
 
         // 9. HUD/FUI
         'hud-fui': function(container) {
-            container.style.cssText = 'display:flex;align-items:center;justify-content:center;background:#0a1628;';
+            container.style.cssText = 'display:flex;align-items:center;justify-content:center;background:#050a14;padding:12px;position:relative;overflow:hidden;';
+
+            // Grid background
+            const grid = document.createElement('div');
+            grid.style.cssText = 'position:absolute;inset:0;background-image:linear-gradient(rgba(0,168,255,0.1) 1px,transparent 1px),linear-gradient(90deg,rgba(0,168,255,0.1) 1px,transparent 1px);background-size:20px 20px;';
+            container.appendChild(grid);
+
             const card = document.createElement('div');
-            card.style.cssText = 'position:relative;padding:28px 36px;border:1px solid #00a8ff;background:rgba(0,168,255,0.05);';
-            card.innerHTML = '<span style="font-family:monospace;font-size:12px;color:#00a8ff;">[ TARGETING ]</span><div style="position:absolute;top:8px;left:8px;width:8px;height:8px;border:1px solid #00a8ff;transform:rotate(45deg);"></div><div style="position:absolute;top:8px;right:8px;width:8px;height:8px;border:1px solid #00a8ff;transform:rotate(45deg);"></div>';
+            card.style.cssText = 'position:relative;padding:12px;border:1px solid #00a8ff;background:rgba(0,168,255,0.08);display:flex;flex-direction:column;gap:8px;';
+
+            // Header with brackets
+            card.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(0,168,255,0.3);padding-bottom:6px;"><span style="font-family:monospace;font-size:8px;color:#00a8ff;letter-spacing:1px;">◆ SYSTEM ONLINE</span><div style="display:flex;gap:2px;"><span style="width:6px;height:6px;border:1px solid #00a8ff;border-radius:1px;transform:rotate(45deg);"></span><span style="font-size:7px;color:#00a8ff;font-family:monospace;">v2.4</span></div></div>';
+
+            // Data display area
+            card.innerHTML += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;background:rgba(0,168,255,0.1);">';
+            card.innerHTML += '<div style="text-align:center;"><div style="font-size:6px;color:#4a90a2;font-family:monospace;">CPU</div><div style="font-size:10px;color:#00d9ff;font-weight:700;font-family:monospace;" id="cpuVal">42</div></div>';
+            card.innerHTML += '<div style="text-align:center;"><div style="font-size:6px;color:#4a90a2;font-family:monospace;">MEM</div><div style="font-size:10px;color:#00d9ff;font-weight:700;font-family:monospace;" id="memVal">67</div></div>';
+            card.innerHTML += '<div style="text-align:center;"><div style="font-size:6px;color:#4a90a2;font-family:monospace;">NET</div><div style="font-size:10px;color:#00d9ff;font-weight:700;font-family:monospace;" id="netVal">98</div></div></div>';
+
+            // Progress bar
+            card.innerHTML += '<div style="display:flex;align-items:center;gap:4px;"><span style="font-size:6px;color:#4a90a2;font-family:monospace;">LOAD</span><div style="flex:1;height:3px;background:rgba(0,168,255,0.2);border-radius:1px;overflow:hidden;"><div style="height:100%;width:75%;background:linear-gradient(90deg,#00a8ff,#00ff88);animation:progress 2s ease-in-out infinite;"></div></div></div>';
+
+            // Scanning line
+            card.innerHTML += '<div style="position:absolute;top:0;left:0;right:0;height:2px;background:rgba(0,217,255,0.5);animation:scan 2s linear infinite;"></div>';
+
             container.appendChild(card);
+
+            // Animate values
+            setInterval(() => {
+                const cpu = document.getElementById('cpuVal');
+                const mem = document.getElementById('memVal');
+                const net = document.getElementById('netVal');
+                if (cpu) cpu.textContent = Math.floor(35 + Math.random() * 30);
+                if (mem) mem.textContent = Math.floor(50 + Math.random() * 40);
+                if (net) net.textContent = Math.floor(85 + Math.random() * 14);
+            }, 800);
+
+            const style = document.createElement('style');
+            style.textContent = `@keyframes scan { 0% { top: 0; opacity: 1; } 100% { top: 100%; opacity: 0; } } @keyframes progress { 0%, 100% { width: 60%; } 50% { width: 90%; } }`;
+            container.appendChild(style);
         },
 
         // 10. Tech Noir
         'tech-noir': function(container) {
-            container.style.cssText = 'display:flex;align-items:center;justify-content:center;background:#0d1b2a;';
+            container.style.cssText = 'display:flex;align-items:center;justify-content:center;background:#0a0e17;padding:12px;position:relative;overflow:hidden;';
+
+            // Rain effect
+            const rain = document.createElement('div');
+            rain.style.cssText = 'position:absolute;inset:0;opacity:0.3;background:repeating-linear-gradient(180deg,transparent 0px,rgba(0,217,255,0.3) 1px,transparent 2px);background-size:100% 20px;animation:rain 0.5s linear infinite;';
+            container.appendChild(rain);
+
             const card = document.createElement('div');
-            card.style.cssText = 'background:linear-gradient(135deg,#1b263b,#415a77);padding:24px 32px;border-left:3px solid #00d9ff;';
-            card.innerHTML = '<span style="font-size:13px;font-weight:500;color:#e0e1dd;letter-spacing:0.1em;">NOIR</span>';
+            card.style.cssText = 'background:linear-gradient(135deg,#1b263b,#0d1b2a);padding:16px 20px;border:1px solid #00d9ff;border-left:3px solid #00d9ff;position:relative;z-index:1;box-shadow:0 0 20px rgba(0,217,255,0.2);display:flex;flex-direction:column;gap:8px;';
+
+            card.innerHTML = '<div style="display:flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;background:#00d9ff;border-radius:50%;box-shadow:0 0 8px #00d9ff;"></span><span style="font-size:11px;font-weight:600;color:#00d9ff;font-family:monospace;letter-spacing:0.15em;">NOIR</span></div>';
+
+            // Data lines
+            card.innerHTML += '<div style="display:flex;gap:4px;font-family:monospace;"><span style="font-size:7px;color:#4a5568;">LOC:001</span><span style="font-size:7px;color:#00d9ff;">RUNNING</span></div>';
+
+            // Scanline
+            card.innerHTML += '<div style="position:absolute;top:0;left:0;right:0;height:1px;background:rgba(0,217,255,0.3);animation:scan 2s linear infinite;"></div>';
+
             container.appendChild(card);
+
+            const style = document.createElement('style');
+            style.textContent = `@keyframes rain { from { background-position: 0 0; } to { background-position: 0 20px; } } @keyframes scan { 0% { top: 0; opacity: 1; } 100% { top: 100%; opacity: 0; } }`;
+            container.appendChild(style);
         },
 
         // 11. Glitch Art
@@ -934,20 +1019,64 @@
 
         // 33. Urban Modern
         'urban-modern': function(container) {
-            container.style.cssText = 'display:flex;align-items:center;justify-content:center;background:#2c2c2c;';
+            container.style.cssText = 'display:flex;align-items:center;justify-content:center;background:#1a1a1a;padding:12px;';
+
             const card = document.createElement('div');
-            card.style.cssText = 'background:#3a3a3a;padding:24px 32px;border-left:4px solid #00d9ff;';
-            card.innerHTML = '<span style="font-size:12px;font-weight:600;color:#fff;letter-spacing:0.15em;text-transform:uppercase;">Urban</span>';
+            card.style.cssText = 'background:#2d2d2d;padding:16px;border-left:4px solid #ff6b35;display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden;';
+
+            // City skyline silhouette
+            card.innerHTML = '<div style="position:absolute;bottom:0;left:0;right:0;height:20px;opacity:0.2;background:linear-gradient(to top,#000 0%,transparent 100%);"></div>';
+            card.innerHTML += '<div style="position:absolute;bottom:0;left:0;right:0;display:flex;justify-content:space-around;align-items:flex-end;opacity:0.3;"><div style="width:6px;height:12px;background:#3a3a3a;"></div><div style="width:8px;height:18px;background:#3a3a3a;"></div><div style="width:5px;height:8px;background:#3a3a3a;"></div><div style="width:10px;height:14px;background:#3a3a3a;"></div><div style="width:6px;height:10px;background:#3a3a3a;"></div></div>';
+
+            // Header
+            card.innerHTML += '<div style="display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1;"><span style="font-size:12px;font-weight:700;color:#fff;letter-spacing:0.1em;text-transform:uppercase;">URBAN</span><span style="font-size:16px;">🏙️</span></div>';
+
+            // Tags
+            card.innerHTML += '<div style="display:flex;gap:4px;position:relative;z-index:1;"><span style="font-size:6px;background:#ff6b35;color:#fff;padding:2px 5px;border-radius:2px;">MODERN</span><span style="font-size:6px;background:#3a3a3a;color:#999;padding:2px 5px;border-radius:2px;">STYLE</span></div>';
+
             container.appendChild(card);
         },
 
         // 34. Dynamic Layout
         'dynamic-layout': function(container) {
-            container.style.cssText = 'display:flex;align-items:center;justify-content:center;background:#f0f0f0;';
-            const card = document.createElement('div');
-            card.style.cssText = 'display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:16px;';
-            card.innerHTML = '<div style="width:28px;height:28px;background:#6366f1;border-radius:8px;transition:all 0.3s;"></div><div style="width:28px;height:28px;background:#a5b4fc;border-radius:8px;transition:all 0.3s;"></div><div style="width:28px;height:28px;background:#c7d2fe;border-radius:8px;transition:all 0.3s;"></div>';
-            container.appendChild(card);
+            container.style.cssText = 'display:flex;align-items:center;justify-content:center;background:#f8fafc;padding:12px;';
+
+            const wrapper = document.createElement('div');
+            wrapper.style.cssText = 'display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);gap:8px;';
+
+            // Create different sized cards
+            const cards = [
+                { content: '📊', span: '1/1', row: '1/2', color: '#6366f1' },
+                { content: '📝', span: '2/3', row: '1/2', color: '#8b5cf6' },
+                { content: '🎨', span: '1/1', row: '2/3', color: '#a78bfa' },
+                { content: '⚡', span: '1/1', row: '2/3', color: '#f472b6', big: true },
+                { content: '🔧', span: '1/1', row: '1/2', color: '#06b6d4' }
+            ];
+
+            cards.forEach((card, i) => {
+                const div = document.createElement('div');
+                const isWide = card.span === '2/3';
+                const isTall = card.row === '1/3';
+                div.style.cssText = `grid-column:${card.span};grid-row:${card.row};background:${card.color};border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:${card.big ? 18 : 14}px;color:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.1);transition:all 0.3s ease;opacity:0;animation:fadeIn 0.3s ease ${i * 0.1}s forwards;`;
+                div.textContent = card.content;
+                wrapper.appendChild(div);
+
+                // Hover effect
+                div.addEventListener('mouseenter', () => {
+                    div.style.transform = 'scale(1.05)';
+                    div.style.boxShadow = '0 4px 16px rgba(0,0,0,0.15)';
+                });
+                div.addEventListener('mouseleave', () => {
+                    div.style.transform = 'scale(1)';
+                    div.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
+                });
+            });
+
+            container.appendChild(wrapper);
+
+            const style = document.createElement('style');
+            style.textContent = '@keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }';
+            container.appendChild(style);
         },
 
         // ============================================
