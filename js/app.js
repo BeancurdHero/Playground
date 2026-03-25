@@ -235,136 +235,26 @@
         }
 
         if (categoryId === 'all-effects') {
-            // Generate all effects placeholder - include real effects first
+            // Display ALL effects from all categories
             const allEffects = [];
 
-            // Add real mouse effects (first 8)
-            if (typeof MOUSE_EFFECTS !== 'undefined') {
-                allEffects.push(...MOUSE_EFFECTS.slice(0, 8));
-            }
+            // Add ALL real effects from each category (not just a few)
+            const effectCategories = [
+                'MOUSE_EFFECTS', 'DESIGN_STYLE_EFFECTS', 'TEXT_EFFECTS', 'TRANSITIONS',
+                'PAGE_TRANSITIONS', 'BACKGROUNDS', 'BACKGROUND_EFFECTS', 'THREE_D_EFFECTS',
+                'THREE_D_TRANSFORMS', 'DATA_VIZ', 'CHARTS_COUNTERS', 'IMAGE_EFFECTS',
+                'SCROLL_EFFECTS', 'LOADING_STATES', 'SVG_ANIMATION', 'MICRO_INTERACTIONS',
+                'LAYOUT_PATTERNS', 'FILTER_EFFECTS', 'BUTTON_ANIMATIONS', 'CARD_EFFECTS',
+                'PARALLAX_EFFECTS', 'FORM_EFFECTS', 'GLITCH_EFFECTS', 'PARTICLE_EFFECTS'
+            ];
 
-            // Add real design style effects (first 3)
-            if (typeof DESIGN_STYLE_EFFECTS !== 'undefined') {
-                allEffects.push(...DESIGN_STYLE_EFFECTS.slice(0, 3));
-            }
-
-            // Add real text effects (first 2)
-            if (typeof TEXT_EFFECTS !== 'undefined') {
-                allEffects.push(...TEXT_EFFECTS.slice(0, 2));
-            }
-
-            // Add real transitions effects (first 2)
-            if (typeof TRANSITIONS !== 'undefined') {
-                allEffects.push(...TRANSITIONS.slice(0, 2));
-            }
-
-            // Add real page transitions effects (first 2)
-            if (typeof PAGE_TRANSITIONS !== 'undefined') {
-                allEffects.push(...PAGE_TRANSITIONS.slice(0, 2));
-            }
-
-            // Add real backgrounds effects (first 2)
-            if (typeof BACKGROUNDS !== 'undefined') {
-                allEffects.push(...BACKGROUNDS.slice(0, 2));
-            }
-
-            // Add real background effects (first 1)
-            if (typeof BACKGROUND_EFFECTS !== 'undefined') {
-                allEffects.push(...BACKGROUND_EFFECTS.slice(0, 1));
-            }
-
-            // Add real 3D effects (first 1)
-            if (typeof THREE_D_EFFECTS !== 'undefined') {
-                allEffects.push(...THREE_D_EFFECTS.slice(0, 1));
-            }
-
-            // Add real 3D transforms effects (first 1)
-            if (typeof THREE_D_TRANSFORMS !== 'undefined') {
-                allEffects.push(...THREE_D_TRANSFORMS.slice(0, 1));
-            }
-
-            // Add real data viz effects (first 1)
-            if (typeof DATA_VIZ !== 'undefined') {
-                allEffects.push(...DATA_VIZ.slice(0, 1));
-            }
-
-            // Add real charts & counters effects (first 1)
-            if (typeof CHARTS_COUNTERS !== 'undefined') {
-                allEffects.push(...CHARTS_COUNTERS.slice(0, 1));
-            }
-
-            // Add real image effects (first 1)
-            if (typeof IMAGE_EFFECTS !== 'undefined') {
-                allEffects.push(...IMAGE_EFFECTS.slice(0, 1));
-            }
-
-            // Add real scroll effects (first 1)
-            if (typeof SCROLL_EFFECTS !== 'undefined') {
-                allEffects.push(...SCROLL_EFFECTS.slice(0, 1));
-            }
-
-            // Add real loading states effects (first 1)
-            if (typeof LOADING_STATES !== 'undefined') {
-                allEffects.push(...LOADING_STATES.slice(0, 1));
-            }
-
-            // Add real SVG animation effects (first 1)
-            if (typeof SVG_ANIMATION !== 'undefined') {
-                allEffects.push(...SVG_ANIMATION.slice(0, 1));
-            }
-
-            // Add real micro interactions effects (first 1)
-            if (typeof MICRO_INTERACTIONS !== 'undefined') {
-                allEffects.push(...MICRO_INTERACTIONS.slice(0, 1));
-            }
-
-            // Add real layout patterns effects (first 1)
-            if (typeof LAYOUT_PATTERNS !== 'undefined') {
-                allEffects.push(...LAYOUT_PATTERNS.slice(0, 1));
-            }
-
-            // Add real filter effects (first 1)
-            if (typeof FILTER_EFFECTS !== 'undefined') {
-                allEffects.push(...FILTER_EFFECTS.slice(0, 1));
-            }
-
-            // Add real button animations effects (first 1)
-            if (typeof BUTTON_ANIMATIONS !== 'undefined') {
-                allEffects.push(...BUTTON_ANIMATIONS.slice(0, 1));
-            }
-
-            // Add real card effects (first 1)
-            if (typeof CARD_EFFECTS !== 'undefined') {
-                allEffects.push(...CARD_EFFECTS.slice(0, 1));
-            }
-
-            // Add real parallax effects (first 1)
-            if (typeof PARALLAX_EFFECTS !== 'undefined') {
-                allEffects.push(...PARALLAX_EFFECTS.slice(0, 1));
-            }
-
-            // Add real form effects (first 1)
-            if (typeof FORM_EFFECTS !== 'undefined') {
-                allEffects.push(...FORM_EFFECTS.slice(0, 1));
-            }
-
-            // Add real glitch effects (first 1)
-            if (typeof GLITCH_EFFECTS !== 'undefined') {
-                allEffects.push(...GLITCH_EFFECTS.slice(0, 1));
-            }
-
-            // Add real particle effects (first 1)
-            if (typeof PARTICLE_EFFECTS !== 'undefined') {
-                allEffects.push(...PARTICLE_EFFECTS.slice(0, 1));
-            }
-
-            // Add placeholder effects from other categories
-            Object.keys(categoryConfigs).forEach(key => {
-                const config = categoryConfigs[key];
-                allEffects.push(...generatePlaceholderEffects(config.prefix, 2));
+            effectCategories.forEach(categoryName => {
+                if (typeof window[categoryName] !== 'undefined') {
+                    allEffects.push(...window[categoryName]);
+                }
             });
 
-            placeholderEffects[categoryId] = allEffects.slice(0, 24);
+            placeholderEffects[categoryId] = allEffects;
             return placeholderEffects[categoryId];
         }
 

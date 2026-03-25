@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Effects Playground - 前端交互效果展示平台</title>
+
+    <!-- React -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Prism.js -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-jsx.min.js"></script>
+
+    <style>
+        /* Base Styles */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --color-bg-primary: #0a0a0f;
+            --color-bg-secondary: #12121a;
+            --color-bg-tertiary: #1a1a24;
+            --color-border: #2a2a3a;
+            --color-text-primary: #f4f4f5;
+            --color-text-secondary: #a1a1aa;
+            --color-text-muted: #71717a;
+            --color-accent: #6366f1;
+            --color-accent-hover: #8b5cf6;
+        }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans SC', sans-serif;
+            background: var(--color-bg-primary);
+            color: var(--color-text-primary);
+            overflow: hidden;
+        }
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--color-bg-secondary); }
+        ::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #3a3a4a; }
+
+        /* Loading */
+        #loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            background: var(--color-bg-primary);
+            z-index: 9999;
+        }
+        #loading.hidden { display: none; }
+        #error {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 16px;
+            background: var(--color-bg-primary);
+            z-index: 9999;
+        }
+        #error.show { display: flex; }
+        #error h1 { color: #ef4444; }
+        #error p { color: var(--color-text-secondary); }
+    </style>
+</head>
+<body>
+    <div id="loading">加载中...</div>
+    <div id="error">
+        <h1>⚠️ 加载失败</h1>
+        <p id="error-message"></p>
+    </div>
+    <div id="root"></div>
+
+    <!-- Load Data First -->
+    <script src="js/data.js"></script>
+
+    <!-- Main App -->
+    <script type="text/babel" data-presets="react,env">
+        const { useState, useEffect, useRef, useMemo } = React;
+
+        // Check if data loaded
+        if (typeof effectsData === 'undefined') {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('error').classList.add('show');
+            document.getElementById('error-message').textContent = 'effectsData 未加载，请检查 js/data.js 文件';
+            throw new Error('effectsData is not defined');
+        }
+
+        // Icons
+        const ICONS = {
+            palette: <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c1.85 0 3.58-.5 5.07-1.37-.61-1.07-.97-2.29-1.07-3.58-.12-1.59.43-3.05 1.35-4.22.92-1.17 2.1-2.05 3.43-2.44 1.33-.39 2.79-.23 4.08.49.49-1.9.49-3.91 0-5.81C23.58 4.26 18.19 2 12 2z"/>,
+            type: <><path d="M4 7V4h16v3M9 20h6M12 4v16"/></>,
+            sparkles: <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2z"/>,
+            'mouse-pointer-2': <path d="M4 4l7.07 17 2.51-7.39L21 11.07z"/>,
+            image: <><path d="M21 19V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></>,
+            sparkle: <path d="M9.937 15.5A2 2 0 008.5 14.063l-6.135-1.582a.5.5 0 010-.962L8.5 9.936A2 2 0 009.937 8.5l1.582-6.135a.5.5 0 01.963 0L14.063 8.5A2 2 0 0015.5 9.937l6.135 1.581a.5.5 0 010 .964L15.5 14.063a2 2 0 00-1.437 1.437l-1.582 6.135a.5.5 0 01-.963 0L9.937 15.5z"/>,
+            box: <path d="M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18s-.41-.06-.57-.18l-7.9-4.44A.991.991 0 013 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18s.41.06.57.18l7.9 4.44c.32.17.53.5.53.88v9z"/>,
+            'bar-chart': <><path d="M12 20V10M18 20V4M6 20v-6"/></>,
+            layers: <><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></>,
+            scroll: <><path d="M2 12c0 5.52 4.48 10 10 10s10-4.48 10-10S17.52 2 12 2 2 6.48 2 12z M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6z"/></>,
+            loader: <><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></>,
+            'pen-tool': <><path d="M12 19l7-7 3 3-7 7-3-3z M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z M2 2l7.586 7.586 M11 11l-2 2"/></>,
+            gesture: <><path d="M4.5 11.5a2.5 2.5 0 015 0V12a2.5 2.5 0 01-5 0v-.5zM13.5 11.5a2.5 2.5 0 015 0v.5a2.5 2.5 0 01-5 0v-.5zM9 14.5c0 1.5 1.5 2.5 3 2.5s3-1 3-2.5"/></>,
+            sliders: <><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></>,
+            filter: <path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/>,
+            'mouse-pointer': <path d="M3 3l7.07 16.97 2.51-7.39L21 11.07z"/>,
+            grid: <><path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/></>,
+            picture: <><path d="M21 19V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></>,
+            svg: <><path d="M12 2L2 7l10 5 10-5-10-5z M2 17l10 5 10-5M2 12l10 5 10-5"/></>,
+            zap: <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>,
+        };
+
+        const Icon = ({ name, size = 20 }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                {ICONS[name] || ICONS.sparkle}
+            </svg>
+        );
+
+        // Copy Button
+        const CopyBtn = ({ text }) => {
+            const [copied, setCopied] = useState(false);
+            return (
+                <button onClick={() => {
+                    navigator.clipboard.writeText(text);
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 2000);
+                }} style={{
+                    padding: '8px 16px',
+                    background: copied ? '#10b981' : 'var(--color-accent)',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    fontWeight: '500'
+                }}>
+                    {copied ? '✓ 已复制' : '📋 复制'}
+                </button>
+            );
+        };
+
+        // Code Section
+        const CodeSection = ({ title, icon, children, copyText }) => {
+            const [open, setOpen] = useState(false);
+            return (
+                <div style={{ marginBottom: '16px', border: '1px solid var(--color-border)', borderRadius: '12px', overflow: 'hidden' }}>
+                    <div onClick={() => setOpen(!open)} style={{
+                        padding: '14px 18px',
+                        background: 'var(--color-bg-tertiary)',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        userSelect: 'none'
+                    }}>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '10px', fontWeight: '500' }}>
+                            {icon} {title}
+                        </span>
+                        <span style={{ transform: open ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s', fontSize: '12px' }}>▼</span>
+                    </div>
+                    {open && (
+                        <div style={{ padding: '18px', background: 'var(--color-bg-secondary)' }}>
+                            {children}
+                            {copyText && <div style={{ marginTop: '16px' }}><CopyBtn text={copyText} /></div>}
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        // Effect Card
+        const EffectCard = ({ effect, onClick }) => (
+            <div onClick={() => onClick(effect)} style={{
+                background: 'var(--color-bg-secondary)',
+                border: '1px solid var(--color-border)',
+                borderRadius: '14px',
+                padding: '18px',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+            }} onMouseEnter={e => {
+                e.currentTarget.style.borderColor = 'var(--color-accent)';
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 10px 30px rgba(99, 102, 241, 0.2)';
+            }} onMouseLeave={e => {
+                e.currentTarget.style.borderColor = 'var(--color-border)';
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'none';
+            }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '12px' }}>
+                    <div style={{
+                        width: '44px',
+                        height: '44px',
+                        borderRadius: '10px',
+                        background: 'linear-gradient(135deg, var(--color-accent), var(--color-accent-hover))',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: '#fff'
+                    }}>
+                        <Icon name={effect.icon || 'sparkle'} size={22} />
+                    </div>
+                    <div>
+                        <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '600' }}>{effect.name}</h3>
+                        <p style={{ margin: '2px 0 0 0', fontSize: '13px', color: 'var(--color-text-secondary)' }}>{effect.nameCN}</p>
+                    </div>
+                </div>
+                <p style={{ margin: 0, fontSize: '13px', color: 'var(--color-text-muted)', lineHeight: '1.5' }}>
+                    {effect.description}
+                </p>
+            </div>
+        );
+
+        // Detail Panel
+        const DetailPanel = ({ effect, onClose }) => {
+            if (!effect) return null;
+
+            const demoHTML = `
+                <!DOCTYPE html>
+                <html><head><meta charset="UTF-8"><script src="https://unpkg.com/react@18/umd/react.production.min.js"><\/script><script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"><\/script><script src="https://unpkg.com/@babel/standalone/babel.min.js"><\/script><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:sans-serif;overflow:hidden}#root{width:100vw;height:100vh}</style></head>
+                <body><div id="root"></div><script type="text/babel">const{useState,useEffect,useRef}=React;try{${effect.code};const name="${effect.code.match(/const\s+(\w+)\s*=/)?.[1] || 'Demo'}";if(typeof eval(name)==='function')ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(eval(name)))}catch(e){document.getElementById('root').innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100vh;color:#f44;font-size:14px">Error: '+e.message+'</div>'}<\/script></body></html>
+            `;
+
+            return (
+                <>
+                    <div onClick={onClose} style={{
+                        position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 99
+                    }} />
+                    <div style={{
+                        position: 'fixed', top: 0, right: 0, width: '580px', maxWidth: '100%', height: '100vh',
+                        background: 'var(--color-bg-secondary)', zIndex: 100, overflowY: 'auto',
+                        boxShadow: '-5px 0 40px rgba(0,0,0,0.5)'
+                    }}>
+                        <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--color-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <div>
+                                <h2 style={{ margin: 0, fontSize: '22px' }}>{effect.name}</h2>
+                                <p style={{ margin: '4px 0 0 0', color: 'var(--color-text-secondary)', fontSize: '14px' }}>{effect.nameCN}</p>
+                            </div>
+                            <button onClick={onClose} style={{
+                                width: '36px', height: '36px', borderRadius: '8px', background: 'transparent',
+                                border: '1px solid var(--color-border)', color: 'var(--color-text-secondary)',
+                                cursor: 'pointer', fontSize: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center'
+                            }}>×</button>
+                        </div>
+                        <div style={{ padding: '20px 24px' }}>
+                            <div style={{ marginBottom: '20px' }}>
+                                <h4 style={{ margin: '0 0 12px 0', fontSize: '13px', color: 'var(--color-text-secondary)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>实时预览</h4>
+                                <iframe style={{ width: '100%', height: '380px', border: '1px solid var(--color-border)', borderRadius: '12px', background: '#000' }} srcDoc={demoHTML} sandbox="allow-scripts" />
+                            </div>
+                            <CodeSection title="AI 生成提示词" icon="📋" copyText={effect.prompt}>
+                                <pre style={{ whiteSpace: 'pre-wrap', fontSize: '14px', lineHeight: '1.7', color: 'var(--color-text-secondary)', margin: 0 }}>{effect.prompt}</pre>
+                            </CodeSection>
+                            <CodeSection title="React 组件代码" icon="💻" copyText={effect.code}>
+                                <pre style={{ fontSize: '13px', lineHeight: '1.5', overflow: 'auto', margin: 0 }}>{effect.code}</pre>
+                            </CodeSection>
+                        </div>
+                    </div>
+                </>
+            );
+        };
+
+        // Main App
+        const App = () => {
+            const [category, setCategory] = useState('design-style');
+            const [effect, setEffect] = useState(null);
+            const [search, setSearch] = useState('');
+            const [ready, setReady] = useState(false);
+
+            useEffect(() => {
+                setReady(true);
+                document.getElementById('loading')?.classList.add('hidden');
+            }, []);
+
+            const currentCat = effectsData?.[category];
+            const effects = useMemo(() => {
+                if (!currentCat?.effects) return [];
+                if (!search.trim()) return currentCat.effects;
+                const q = search.toLowerCase();
+                return currentCat.effects.filter(e =>
+                    e.name.toLowerCase().includes(q) || e.nameCN.toLowerCase().includes(q) || e.description.toLowerCase().includes(q)
+                );
+            }, [currentCat, search]);
+
+            if (!ready) return null;
+
+            return (
+                <div style={{ display: 'flex', height: '100vh' }}>
+                    {/* Sidebar */}
+                    <div style={{ width: '260px', background: 'var(--color-bg-secondary)', borderRight: '1px solid var(--color-border)', display: 'flex', flexDirection: 'column' }}>
+                        <div style={{ padding: '20px 18px', borderBottom: '1px solid var(--color-border)' }}>
+                            <h1 style={{ fontSize: '18px', fontWeight: '700', margin: 0, background: 'linear-gradient(135deg, var(--color-accent), var(--color-accent-hover))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                                Effects Playground
+                            </h1>
+                            <p style={{ fontSize: '12px', color: 'var(--color-text-muted)', marginTop: '4px' }}>前端交互效果展示平台</p>
+                        </div>
+                        <div style={{ padding: '12px' }}>
+                            <input
+                                placeholder="搜索效果..."
+                                value={search}
+                                onChange={e => setSearch(e.target.value)}
+                                style={{ width: '100%', padding: '10px 14px', background: 'var(--color-bg-tertiary)', border: '1px solid var(--color-border)', borderRadius: '10px', color: 'var(--color-text-primary)', fontSize: '14px', outline: 'none' }}
+                            />
+                        </div>
+                        <div style={{ flex: 1, overflowY: 'auto', padding: '0 12px 16px' }}>
+                            {Object.entries(effectsData).map(([key, cat]) => (
+                                <div key={key} onClick={() => { setCategory(key); setSearch(''); }} style={{
+                                    padding: '11px 14px', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px',
+                                    background: category === key ? 'var(--color-accent)' : 'transparent',
+                                    color: category === key ? '#fff' : 'var(--color-text-secondary)',
+                                    marginBottom: '3px'
+                                }}>
+                                    <Icon name={cat.icon || 'sparkle'} size={16} />
+                                    <span style={{ flex: 1, fontSize: '14px', fontWeight: '500' }}>{cat.nameCN}</span>
+                                    <span style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '12px', background: 'rgba(255,255,255,0.15)' }}>{cat.effects?.length || 0}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Main */}
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+                        <div style={{ padding: '18px 28px', borderBottom: '1px solid var(--color-border)', background: 'var(--color-bg-secondary)' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                                <div style={{ width: '44px', height: '44px', borderRadius: '11px', background: 'linear-gradient(135deg, var(--color-accent), var(--color-accent-hover))', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
+                                    <Icon name={currentCat?.icon || 'sparkle'} size={22} />
+                                </div>
+                                <div>
+                                    <h2 style={{ margin: 0, fontSize: '20px', fontWeight: '600' }}>{currentCat?.name}</h2>
+                                    <p style={{ margin: '2px 0 0 0', color: 'var(--color-text-secondary)', fontSize: '13px' }}>{currentCat?.nameCN} · {effects.length} 个效果</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div style={{ flex: 1, overflowY: 'auto', padding: '24px 28px' }}>
+                            {effects.length > 0 ? (
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '16px' }}>
+                                    {effects.map((e, i) => <EffectCard key={e.id || i} effect={e} onClick={setEffect} />)}
+                                </div>
+                            ) : (
+                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '280px', color: 'var(--color-text-muted)' }}>
+                                    <div style={{ fontSize: '40px', marginBottom: '12px' }}>🔍</div>
+                                    <h3 style={{ fontSize: '16px', color: 'var(--color-text-secondary)' }}>未找到匹配的效果</h3>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    <DetailPanel effect={effect} onClose={() => setEffect(null)} />
+                </div>
+            );
+        };
+
+        // Render
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>

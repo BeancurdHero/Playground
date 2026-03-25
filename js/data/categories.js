@@ -27,7 +27,7 @@ const CATEGORIES = [
     { id: 'form-effects', name: 'Form Effects', nameZh: '表单效果', icon: '📝', count: 10 },
     { id: 'glitch-effects', name: 'Glitch Effects', nameZh: '故障效果', icon: '📺', count: 8 },
     { id: 'particle-effects', name: 'Particle Effects', nameZh: '粒子效果', icon: '💫', count: 8 },
-    { id: 'all-effects', name: 'All Effects', nameZh: '全部效果', icon: '🌟', count: 200 }
+    { id: 'all-effects', name: 'All Effects', nameZh: '全部效果', icon: '🌟', count: 240 }
 ];
 
 // Make available globally
