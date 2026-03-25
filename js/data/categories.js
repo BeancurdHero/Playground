@@ -3,8 +3,8 @@
 // ============================================
 
 const CATEGORIES = [
-    { id: 'mouse-effects', name: 'Mouse Effects', nameZh: '鼠标效果', icon: '🖱️', count: 12 },
     { id: 'design-style', name: 'Design Style', nameZh: '设计风格', icon: '🎨', count: 34 },
+    { id: 'mouse-effects', name: 'Mouse Effects', nameZh: '鼠标效果', icon: '🖱️', count: 12 },
     { id: 'text-effects', name: 'Text Effects', nameZh: '文字效果', icon: '✍️', count: 12 },
     { id: 'transitions', name: 'Transitions', nameZh: '过渡动画', icon: '🔄', count: 10 },
     { id: 'page-transitions', name: 'Page Transitions', nameZh: '页面转场', icon: '📄', count: 8 },
