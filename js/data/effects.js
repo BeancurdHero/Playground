@@ -5255,20 +5255,42 @@
 
         // 1. Card Hover
         'card-hover': function(container) {
-            container.style.cssText = 'display:flex;align-items:center;justify-content:center;background:#1a1a2e;padding:20px;';
+            container.style.cssText = 'display:flex;align-items:center;justify-content:center;background:#1a1a2e;padding:16px;overflow:hidden;';
+
             const card = document.createElement('div');
-            card.style.cssText = 'width:90px;height:60px;background:linear-gradient(135deg,#6750A4,#9381FF);border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:600;transition:all 0.3s ease;box-shadow:0 4px 15px rgba(103,80,164,0.3);';
-            card.textContent = 'HOVER';
+            card.style.cssText = 'position:relative;width:100px;height:65px;background:linear-gradient(135deg,#1e1e3f,#2d2d5a);border-radius:16px;overflow:hidden;cursor:pointer;';
+
+            // Shine effect layer
+            const shine = document.createElement('div');
+            shine.style.cssText = 'position:absolute;inset:-50%;width:200%;height:200%;background:radial-gradient(circle at var(--x,50%) var(--y,50%),rgba(255,255,255,0.3) 0%,transparent 50%);opacity:0;transition:opacity 0.3s ease;pointer-events:none;';
+            card.appendChild(shine);
+
+            // Card content
+            const content = document.createElement('div');
+            content.style.cssText = 'position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:6px;';
+            content.innerHTML = '<span style="font-size:24px;">✨</span><span style="font-size:10px;font-weight:600;color:#fff;letter-spacing:1px;">SPOTLIGHT</span>';
+            card.appendChild(content);
+
+            // Border glow
+            const border = document.createElement('div');
+            border.style.cssText = 'position:absolute;inset:0;border-radius:16px;padding:2px;background:linear-gradient(135deg,#6750A4,#9381FF,#EADDFF);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:0.3;transition:opacity 0.3s ease;';
+            card.appendChild(border);
+
             container.appendChild(card);
 
-            container.addEventListener('mouseenter', () => {
-                card.style.transform = 'translateY(-8px) scale(1.05)';
-                card.style.boxShadow = '0 12px 30px rgba(103,80,164,0.5)';
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                const y = ((e.clientY - rect.top) / rect.height) * 100;
+                shine.style.setProperty('--x', x + '%');
+                shine.style.setProperty('--y', y + '%');
+                shine.style.opacity = '1';
+                border.style.opacity = '1';
             });
 
-            container.addEventListener('mouseleave', () => {
-                card.style.transform = 'translateY(0) scale(1)';
-                card.style.boxShadow = '0 4px 15px rgba(103,80,164,0.3)';
+            card.addEventListener('mouseleave', () => {
+                shine.style.opacity = '0';
+                border.style.opacity = '0.3';
             });
         },
 
